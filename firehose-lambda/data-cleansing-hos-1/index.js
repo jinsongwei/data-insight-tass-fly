@@ -16,8 +16,8 @@
 const AWS = require('aws-sdk');
 
 const ERR = require('error-msg');
-const schemaGate = require('../../lib/schema-gate/index');
-const CaseValidation = require('../../lib/case-validation/index');
+const schemaGate = require('../../api-gate/schema-gate/index');
+const CaseValidation = require('../../api-gate/case-validation/index');
 
 let ddb = new AWS.DynamoDB({apiVersion: "2012-8-10", region: 'us-west-2'});
 
