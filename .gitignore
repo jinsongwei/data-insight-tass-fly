@@ -1,1 +1,21 @@
 # Created by .ignore support plugin (hsz.mobi)
+### Example user template template
+### Example user template
+
+# IntelliJ project files
+.idea
+*.iml
+config
+html
+playground
+redshift-proxy
+out
+gen
+config/
+firehose-lambda/data-cleansing-hos-1/node_modules/
+html/
+lib/case-validation/node_modules/
+playground/
+producer/config/
+producer/node_modules/
+redshift-proxy/

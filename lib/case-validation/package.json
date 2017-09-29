@@ -1,0 +1,19 @@
+{
+  "name": "case-validation",
+  "version": "1.0.0",
+  "description": "case validations api",
+  "repository": {
+    "type": "git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "error-msg": "./../error-msg"
+  },
+  "devDependencies": {
+  },
+  "main": "index.js",
+  "author": "William Jin",
+  "license": "ISC"
+}
