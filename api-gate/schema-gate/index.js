@@ -19,6 +19,9 @@ Protocol.registerSchema = (hospitalName, version, schemaJson, callback) => {
         callback(new Error(INVALID_PARAMS));
         return;
     }
+    let attributes = Object.keys(schemaJson);
+    // console.log(attributes);
+
     let schemaDocument = jsonToDocumentWithReverse(schemaJson);
     let params = {
         TableName: META_DATA_TABLE,
@@ -29,10 +32,12 @@ Protocol.registerSchema = (hospitalName, version, schemaJson, callback) => {
             rangeKey: {
                 S: version
             },
-            schema: {M: schemaDocument.keyValue},
-            schemaReverse: {M: schemaDocument.valueKey}
+            schema: {M: schemaDocument.taasToHos},
+            schemaReverse: {M: schemaDocument.hosToTaas},
+            attributes: {SS: attributes}
         }
     };
+    console.log(params);
     ddb.putItem(params, callback);
 };
 
@@ -93,7 +98,19 @@ Protocol.getSchema = (hospitalName, version, callback) => {
     });
 };
 
+Protocol.getTaasFormatRecord = (hosTaasMapper, record) => {
+    let taasFlyRecord = {};
+    for (let key in hosTaasMapper) {
+        if (hosTaasMapper.hasOwnProperty(key) && record.hasOwnProperty(key)) {
+            if(typeof hosTaasMapper[key] === 'string')
+                taasFlyRecord[hosTaasMapper[key]] = record[key];
+        }
+    }
+    return taasFlyRecord;
+};
+
 function jsonToDocumentWithReverse(schemaJson) {
+    //key is hospital attribute name, value is Taas attribute name
     let schemaKeyValue = {};
     let schemaValueKey = {};
     for (let key in schemaJson) {
@@ -103,17 +120,12 @@ function jsonToDocumentWithReverse(schemaJson) {
                     schemaKeyValue[key] = {S: schemaJson[key]};
                     schemaValueKey[schemaJson[key]] = {S: key};
                     break;
-                case 'number':
-                    schemaKeyValue[key] = {N: schemaJson[key]};
-                    schemaKeyValue[schemaJson[key]] = {N: key};
-                    break;
                 default:
                     schemaKeyValue[key] = {NULL: true};
-                    schemaValueKey[schemaJson[key]] = {NULL: true};
             }
         }
     }
-    return {keyValue: schemaKeyValue, valueKey: schemaValueKey};
+    return {taasToHos: schemaValueKey, hosToTaas: schemaKeyValue};
 }
 
 Protocol.jsonToDocument = (json) => {
@@ -140,7 +152,12 @@ Protocol.documentToJson = (document) => {
     for (let key in document) {
         if (document.hasOwnProperty(key)) {
             let type = Object.keys(document[key])[0];
-            jsonFormat[key] = document[key][type];
+            if (type === 'S')
+                jsonFormat[key] = document[key][type];
+            else if (type === 'N')
+                jsonFormat[key] = Number(document[key][type]);
+            else if (type === 'NULL')
+                jsonFormat[key] = null;
         }
     }
     return jsonFormat;
