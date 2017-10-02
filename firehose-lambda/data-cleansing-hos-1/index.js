@@ -26,7 +26,7 @@ const SCHEMA_VERSION = '1.0.0';
 const HOS_META_DATA_TABLE = 'hos1_table';
 const META_DATA_TABLE = 'meta-data-table';
 
-function processError(err, func, callback) {
+function serverError(err, func, callback) {
     ERR.Log(HOSPITAL_NAME, func, err);
     callback(err);
 }
@@ -42,22 +42,25 @@ function DataTransform(event) {
 
         displayInfo(err => {
             if (err) {
-                processError(new Error(err), "displayInfo", callback);
+                serverError(new Error(err), "displayInfo", callback);
                 return;
             }
             schemaTransformation((err, intermediateData) => {
                 if (err) {
-                    processError(new Error(err), "schemaValidation", callback);
+                    serverError(new Error(err), "schemaValidation", callback);
                     return;
                 }
                 caseValidationCheck(intermediateData, (err, cleanData) => {
                     if (err) {
-                        processError(new Error(err), "caseValidationCheck", callback);
+                        serverError(new Error(err), "caseValidationCheck", callback);
                         return;
                     }
+                    console.log(cleanData);
+                    callback();
+                    return;
                     serializeData(cleanData, (err, records) => {
                         if (err) {
-                            processError(new Error(err), "saveToDDB", callback);
+                            serverError(new Error(err), "saveToDDB", callback);
                             return;
                         }
                         callback(null, records);

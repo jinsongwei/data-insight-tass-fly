@@ -9,8 +9,7 @@ const event = require('./event.json');
 
 index.handler(event, null, (err, data)=>{
     if(err) console.error(err, err.stack);
-    console.log("\n\n start here \n\n");
-    console.log(data);
+    else console.log(data);
 });
 
 
