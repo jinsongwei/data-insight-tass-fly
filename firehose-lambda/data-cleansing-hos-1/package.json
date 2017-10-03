@@ -15,7 +15,8 @@
   "author": "William Jin",
   "license": "ISC",
   "dependencies": {
-    "error-msg": "../../lib/error-msg",
-    "schema-gate": "../../lib/schema-gate"
+    "error-msg": "../../api-gate/error-msg",
+    "schema-gate": "../../api-gate/schema-gate",
+    "case-validation": "../../api-gate/case-validation"
   }
 }

@@ -2,11 +2,11 @@
  *   author: William Jin
  */
 
-    //todo remove it
-const config = require('../../config/config-helper').config;
-const AWS = new config().AWS; // remove this when upload to AWS
+// //todo remove it
+// const config = require('../../config/config-helper').config;
+// const AWS = new config().AWS; // remove this when upload to AWS
 
-// const AWS = require('aws-sdk');
+const AWS = require('aws-sdk');
 const ddb = new AWS.DynamoDB({apiVersion: '2012-08-10', region: 'us-west-2'});
 
 const META_DATA_TABLE = 'meta-data-table';
@@ -18,13 +18,17 @@ function CaseValidation(timeFunc) {
     this.data = {};                     // a schema transformed data.
     this.conditions = [];               // add condition functions
     this.timeConverter = timeFunc;      // define a function that input as a hospital time convention
-                                        // return a TaasFly unified Date.toString() format
+
+    /**                                    // return a TaasFly unified Date.toString() format
+     * @params data: a Taas schema data,
+     * @return object contains {result: 'Ok/Dropped', data: <clean data>}
+     */
     this.validate = (data) => {
-    };                                  // @params data: a Taas schema data,
+    };
 
     const timeHolders = {};
 
-    // native generalized conditions
+    // generalized conditions
     // condition 1
     let attributesValidation = () => {
 
@@ -70,80 +74,79 @@ function CaseValidation(timeFunc) {
             console.log('false assertion 5');
             return false;
         }
-
         return true;
     };
 
     this.conditions.push(attributesValidation);
     this.conditions.push(validateTime);
 
-    this.timeFormatSwitcher = (isSwitchNumber) =>{
-        if(timeHolders['create_time']){
+    this.timeFormatSwitcher = (isSwitchNumber) => {
+        if (timeHolders['create_time']) {
             this.data['create_time'] = isSwitchNumber ?
                 timeHolders['create_time'].getTime() : timeHolders['create_time'].toLocaleString();
         }
 
-        if(timeHolders['update_time']){
+        if (timeHolders['update_time']) {
             this.data['update_time'] = isSwitchNumber ?
                 timeHolders['update_time'].getTime() : timeHolders['update_time'].toLocaleString();
         }
 
-        if(timeHolders['scheduled_time']){
+        if (timeHolders['scheduled_time']) {
             this.data['scheduled_time'] = isSwitchNumber ?
                 timeHolders['scheduled_time'].getTime() : timeHolders['scheduled_time'].toLocaleString();
         }
 
-        if(timeHolders['cancel_time']){
+        if (timeHolders['cancel_time']) {
             this.data['cancel_time'] = isSwitchNumber ?
                 timeHolders['cancel_time'].getTime() : timeHolders['cancel_time'].toLocaleString();
         }
 
-        if(timeHolders['scheduled_setup_start_time']){
+        if (timeHolders['scheduled_setup_start_time']) {
             this.data['scheduled_setup_start_time'] = isSwitchNumber ?
                 timeHolders['scheduled_setup_start_time'].getTime() : timeHolders['scheduled_setup_start_time'].toLocaleString();
         }
 
-        if(timeHolders['scheduled_in_room_time']){
+        if (timeHolders['scheduled_in_room_time']) {
             this.data['scheduled_in_room_time'] = isSwitchNumber ?
                 timeHolders['scheduled_in_room_time'].getTime() : timeHolders['scheduled_in_room_time'].toLocaleString();
         }
 
-        if(timeHolders['scheduled_out_room_time']){
+        if (timeHolders['scheduled_out_room_time']) {
             this.data['scheduled_out_room_time'] = isSwitchNumber ?
                 timeHolders['scheduled_out_room_time'].getTime() : timeHolders['scheduled_out_room_time'].toLocaleString();
         }
 
-        if(timeHolders['scheduled_cleanup_finished_time']){
+        if (timeHolders['scheduled_cleanup_finished_time']) {
             this.data['scheduled_cleanup_finished_time'] = isSwitchNumber ?
                 timeHolders['scheduled_cleanup_finished_time'].getTime() : timeHolders['scheduled_cleanup_finished_time'].toLocaleString();
         }
 
-        if(timeHolders['room_setup_start_time']){
+        if (timeHolders['room_setup_start_time']) {
             this.data['room_setup_start_time'] = isSwitchNumber ?
                 timeHolders['room_setup_start_time'].getTime() : timeHolders['room_setup_start_time'].toLocaleString();
         }
 
-        if(timeHolders['room_ready_time']){
+        if (timeHolders['room_ready_time']) {
             this.data['room_ready_time'] = isSwitchNumber ?
                 timeHolders['room_ready_time'].getTime() : timeHolders['room_ready_time'].toLocaleString();
         }
 
-        if(timeHolders['patient_in_room_time']){
+        if (timeHolders['patient_in_room_time']) {
             this.data['patient_in_room_time'] = isSwitchNumber ?
                 timeHolders['patient_in_room_time'].getTime() : timeHolders['patient_in_room_time'].toLocaleString();
         }
 
-        if(timeHolders['patient_out_room_time']){
+        if (timeHolders['patient_out_room_time']) {
             this.data['patient_out_room_time'] = isSwitchNumber ?
                 timeHolders['patient_out_room_time'].getTime() : timeHolders['patient_out_room_time'].toLocaleString();
         }
 
-        if(timeHolders['room_cleanup_start_time']){
+        if (timeHolders['room_cleanup_start_time']) {
             this.data['room_cleanup_start_time'] = isSwitchNumber ?
                 timeHolders['room_cleanup_start_time'].getTime() : timeHolders['room_cleanup_start_time'].toLocaleString();
         }
 
-        if(timeHolders['room_cleanup_finished_time']){
+        if (timeHolders['room_cleanup_finished_time']) {
             this.data['room_cleanup_finished_time'] = isSwitchNumber ?
                 timeHolders['room_cleanup_finished_time'].getTime() : timeHolders['room_cleanup_finished_time'].toLocaleString();
         }

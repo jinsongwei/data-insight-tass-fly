@@ -3,10 +3,10 @@
  */
 
 //todo remove it
-const config = require('../../config/config-helper').config;
-const AWS = new config().AWS; // remove this when upload to AWS
+// const config = require('../../config/config-helper').config;
+// const AWS = new config().AWS; // remove this when upload to AWS
 
-// const AWS = require('aws-sdk');
+const AWS = require('aws-sdk');
 const Protocol = require('./protocol');
 const ddb = new AWS.DynamoDB({apiVersion: '2012-08-10', region: 'us-west-2'});
 
@@ -20,7 +20,6 @@ Protocol.registerSchema = (hospitalName, version, schemaJson, callback) => {
         return;
     }
     let attributes = Object.keys(schemaJson);
-    // console.log(attributes);
 
     let schemaDocument = jsonToDocumentWithReverse(schemaJson);
     let params = {

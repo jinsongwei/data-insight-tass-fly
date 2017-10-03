@@ -5,19 +5,19 @@
  *
  *   1. mapping schema from hospital to TaasFly formatted data.
  *   2. clean invalid cases.
- *   3. save meta data into DynamoDb.
- *   4. callback clean data and redirect to S3 as backup
+ *   3. save meta data into DynamoDb (optional).
+ *   4. callback clean data and redirect to S3 as backup and trigger redshift to copy
  */
 
 //todo remove below when uploading to AWS
-// let config = require('../../config/config-helper').config;
-// let AWS = new config().AWS; // remove this when upload to AWS
+let config = require('../../config/config-helper').config;
+let AWS = new config().AWS; // remove this when upload to AWS
 
-const AWS = require('aws-sdk');
+// const AWS = require('aws-sdk');
 
 const ERR = require('error-msg');
-const schemaGate = require('../../api-gate/schema-gate/index');
-const CaseValidation = require('../../api-gate/case-validation/index');
+const schemaGate = require('schema-gate');
+const CaseValidation = require('case-validation');
 
 let ddb = new AWS.DynamoDB({apiVersion: "2012-8-10", region: 'us-west-2'});
 
@@ -55,14 +55,12 @@ function DataTransform(event) {
                         serverError(new Error(err), "caseValidationCheck", callback);
                         return;
                     }
-                    console.log(cleanData);
-                    callback();
-                    return;
                     serializeData(cleanData, (err, records) => {
                         if (err) {
                             serverError(new Error(err), "saveToDDB", callback);
                             return;
                         }
+                        console.log(records);
                         callback(null, records);
                     });
                 });
@@ -72,7 +70,7 @@ function DataTransform(event) {
 
     // add log info here for particular interest
     function displayInfo(callback) {
-        console.log(Date.now());
+        console.log(new Date().toLocaleString());
         callback();
     }
 
@@ -115,10 +113,15 @@ function DataTransform(event) {
         caseValidation.conditions.push(caseIdAttrInvalid);
 
         // validate all records
-        for (let i = 0; i < intermediateData.length; i++) {
-            let result = caseValidation.validate(intermediateData[i].data);
-            console.log(result);
-        }
+        let cleanData = intermediateData.map((record)=>{
+            let res = caseValidation.validate(record.data);
+            return {
+                recordId: record.recordId,
+                result: res.result,
+                data: res.data,
+            }
+        });
+        callback(null, cleanData);
     }
 
     function serializeData(cleanData, callback) {
