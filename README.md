@@ -8,62 +8,47 @@ Built A data pipeline framework for realtime ETL
 
 [Demo Slide](http://www.williamjin.com)   
 
-## Healthcare company current Data Structure
+## Healthcare company current data infrastructure
 
+![Alt text](/img/cur_data_pipeline.png?raw=true)
 
-## Healthcare company current Data Structure
-### 1. Kafka  
-Kafka as the message broker. Deployed on the Kafka system on AWS cluster with 3 ec2 instances.  
+Hospitals send their records every day to the company’s cloud, and then software engineers run script to clean those data and load to database for data scientists use. This process is controlled manually, and the data is processed once a day. 
+With more and more hospitals became their clients. This system requires more and more human efforts to achieve data transformation, and also affect that data scientists analyze the data in time.  
 
-### 2. Spark Streaming
-Spark Streaming to do the micro-batch jobs. Calculate the trending of products for customers with different ages and in different locations. The window size is adjustable.  
-
-### 3. Cassandra
-Cassandra as the database to store the recommendation list and results from spark streaming.
-
-## Batch Processing 
-### 1. HDFS
-HDFS to store the data from Kafka. Every 20Mb, the Kafka consumer will save the file to HDFS to ensure data persistence.
-### 2. Hadoop MapReduce
-Implemented 5 mapreduce jobs in chain to calculate the recommendation list by using the item based collaborative filtering.
+![Alt text](/img/attributes.png?raw=true)
 
 ## Data Pipeline
-Reference-style: 
-![alt text][logo]
 
-[logo]: https://github.com/zkz917/Sale_analysis_Recommendation_Insight/blob/master/image/data.png
+![Alt text](/img/my_data_pipeline.png?raw=true)
 
-### MapReduce Job
-cd src
+### 1. Kinesis  
+Kinesis ingests all incoming records based on different subscriptions (hospitals).
 
-hdfs dfs -rm -r /dataDividedByUser
+#### Configuration: 
 
-hdfs dfs -rm -r /coOccurrenceMatrix
+- 2 weeks retention period for backup
+- 5 shards
+- 1000 events per shards
 
-hdfs dfs -rm -r /Normalize
+### 2. FireHose and Lambda
+Firehose does route records to different destination and also collaborate with Lambda to help data transformation. Incoming records from Kinesis will reside in buffer first, then FireHose trigger Lambda function to do micro batch processing to do schema and case validation. After Lambda function finishes, FireHose will send clean data to S3 and invoke RedShift to run COPY command to load clean data from S3 to RedShift.
 
-hdfs dfs -rm -r /Multiplication
+#### Configuration:
 
-hdfs dfs -rm -r /Sum
+- 1 MB buffer or 60 seconds threshold in order to trigger Lambda
+- Retry 3 times if Lambda fails
+- save records as JSON format to S3
+- order data as time-stamp in S3
 
-cd src/main/java/
+### 3. DynamoDB
+As key sorted-key value database, it provides high performance for schema dictionary matching, record joins, and metadata lookup. A hospital can create a table in DynamoDB and define customized partition key and sort key. Also provide up to 10 indexing tables for other use case queries in high speed. 
 
-hadoop com.sun.tools.javac.Main *.java
+#### Configuration:
+- auto-scalling up to 100000 read/write units
+- 2 index tables for hospitals
+- consistent read query. 
 
-jar cf recommender.jar *.class
+## MicroBatch Processing
+![Alt text](/img/real-time-graph.png?raw=true)
 
-hadoop jar recommender.jar Driver /input /dataDividedByUser /coOccurrenceMatrix /Normalize /Multiplication /Sum
 
-hdfs dfs -cat /Sum/*
-
-#args0: original dataset
-
-#args1: output directory for DividerByUser job
-
-#args2: output directory for coOccurrenceMatrixBuilder job
-
-#args3: output directory for Normalize job
-
-#args4: output directory for Multiplication job
-
-#args5: output directory for Sum job
