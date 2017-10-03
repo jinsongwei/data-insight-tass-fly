@@ -109,6 +109,8 @@ val cleanData = RE.validate(dirtyData);
 
 ![Alt text](/img/real-time-graph.png?raw=true)
 
+Lambda is triggered by every minutes roughly.
+
 ## Direcotry Hierarchy
 
 ```
