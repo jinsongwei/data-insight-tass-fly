@@ -1,6 +1,6 @@
 # Data Insight Tass Fly
 
-Addressed a healthcare company’s data infrastructure challenges that are hard to manage data transformation for variety of hospital’s data sources.
+Addressed a healthcare company’s data infrastructure challenges which are hard to manage data transformation for variety of hospital’s data sources.
  
 Provided A data transformation Framework that provides schema matching with simple API and rule engine that defines rules and conditions with simple user Interface.
 
@@ -15,7 +15,11 @@ Built A data pipeline framework for realtime ETL
 Hospitals send their records every day to the company’s cloud, and then software engineers run script to clean those data and load to database for data scientists use. This process is controlled manually, and the data is processed once a day. 
 With more and more hospitals became their clients. This system requires more and more human efforts to achieve data transformation, and also affect that data scientists analyze the data in time.  
 
+The another problem is that the hospitals usually have their own information system and different hospitals have different schemas and different relations among attributes. So writing a new script to matching the schema, and cleaning data could take up to 4 weeks to finish.
+
 ![Alt text](/img/attributes.png?raw=true)
+
+Addressed problems above, we can build a real-time pipeline and data transformation framework to improve system and reduce workload.
 
 ## Data Pipeline
 
@@ -46,9 +50,65 @@ As key sorted-key value database, it provides high performance for schema dictio
 #### Configuration:
 - auto-scalling up to 100000 read/write units
 - 2 index tables for hospitals
-- consistent read query. 
+- consistent read. 
+
+### Data transformation framework:
+
+####       ----- API for schmea factory -----
+
+``` javascript
+/**
+ *
+ * @param hospitalName: hospital name
+ * @param version:  schema version
+ * @param schemaJson: json object that map TaasFly to hospital attributes
+ * @param callback: (err, null) if succeed err is null
+ */
+exports.registerSchema = (hospitalName, version, schemaJson, callback) => {
+};
+
+/**
+ * @param hospitalName : hospital name
+ * @param version: schema version
+ * @param schemaJson: json object that map TaasFly to hospital attributes
+ * @param callback: if succeed err is null.
+ */
+exports.updateSchema = (hospitalName, version, schemaJson, callback) => {
+};
+
+/**
+ * @param hospitalName
+ * @param version
+ * @param callback: (err, schema), schema is dynamoDB document type (hospital -> TaasFly) mapping
+ */
+exports.getSchema = (hospitalName, version, callback) =>{
+};
+
+```
+####   ----- API for Rule Engine -----
+
+``` javascript
+val RE = require('case-validation');
+
+RE.timeConverter = function(inputTime){ return new Date(unified_time_format)};
+
+RE.conditions.push(conditionFunc1);
+RE.conditions.push(conditionFunc2);
+...
+
+val cleanData = RE.validate(dirtyData);
+
+```
 
 ## MicroBatch Processing
 ![Alt text](/img/real-time-graph.png?raw=true)
 
+## Summary
 
+This data pipeline provided real-time data transformation, high automation among ETL, and reduced a large amount of time to deal with different schema and data cleansing problems.
+
+## Future Work
+
+Apply Lambda architecture to support system validation. Add a batch processing and using Spark to clean data in different logic in order to check the correctness of real time data transformation.
+
+![Alt text](/img/future-pipeline.png?raw=true)
