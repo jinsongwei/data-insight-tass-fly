@@ -50,12 +50,55 @@ As key sorted-key value database, it provides high performance for schema dictio
 #### Configuration:
 - auto-scalling up to 100000 read/write units
 - 2 index tables for hospitals
-- consistent read query. 
+- consistent read. 
 
 ### Data transformation framework:
-![Alt text](/img/schema-api.png?raw=true)
-![Alt text](/img/rule-engine.png?raw=true)
 
+####       ----- API for schmea factory -----
+
+``` javascript
+/**
+ *
+ * @param hospitalName: hospital name
+ * @param version:  schema version
+ * @param schemaJson: json object that map TaasFly to hospital attributes
+ * @param callback: (err, null) if succeed err is null
+ */
+exports.registerSchema = (hospitalName, version, schemaJson, callback) => {
+};
+
+/**
+ * @param hospitalName : hospital name
+ * @param version: schema version
+ * @param schemaJson: json object that map TaasFly to hospital attributes
+ * @param callback: if succeed err is null.
+ */
+exports.updateSchema = (hospitalName, version, schemaJson, callback) => {
+};
+
+/**
+ * @param hospitalName
+ * @param version
+ * @param callback: (err, schema), schema is dynamoDB document type (hospital -> TaasFly) mapping
+ */
+exports.getSchema = (hospitalName, version, callback) =>{
+};
+
+```
+####   ----- API for Rule Engine -----
+
+``` javascript
+val RE = require('case-validation');
+
+RE.timeConverter = function(inputTime){ return new Date(unified_time_format)};
+
+RE.conditions.push(conditionFunc1);
+RE.conditions.push(conditionFunc2);
+...
+
+val cleanData = RE.validate(dirtyData);
+
+```
 
 ## MicroBatch Processing
 ![Alt text](/img/real-time-graph.png?raw=true)
