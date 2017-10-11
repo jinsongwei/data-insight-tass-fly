@@ -108,6 +108,8 @@ val cleanData = RE.validate(dirtyData);
 ### MicroBatch System Monitor
 
 ![Alt text](/img/real-time-graph.png?raw=true)
+![Alt text](/img/cloud-watch-time-series.png?raw=true)
+![Alt text](/img/cloud-watch-numbers.png?raw=true)
 
 Lambda is triggered by every minutes roughly.
 
