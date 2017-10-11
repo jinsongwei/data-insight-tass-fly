@@ -10,7 +10,7 @@ const AWS = require('aws-sdk');
 const ddb = new AWS.DynamoDB({apiVersion: '2012-08-10', region: 'us-west-2'});
 
 const META_DATA_TABLE = 'meta-data-table';
-const ERR = require('error-msg');
+const ERR = require('../error-msg/error');
 
 
 function CaseValidation(timeFunc) {

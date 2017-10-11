@@ -11,7 +11,7 @@
  *
  * @param hospitalName: hospital name
  * @param version:  schema version
- * @param schemaJson: json object that map TaasFly to hospital attributes
+ * @param schemaJson: json object that map hospital to TaasFly attributes
  * @param callback: (err, null) if succeed err is null
  */
 exports.registerSchema = (hospitalName, version, schemaJson, callback) => {
@@ -20,7 +20,7 @@ exports.registerSchema = (hospitalName, version, schemaJson, callback) => {
 /**
  * @param hospitalName : hospital name
  * @param version: schema version
- * @param schemaJson: json object that map TaasFly to hospital attributes
+ * @param schemaJson: json object that map hospital to TaasFly attributes
  * @param callback: if succeed err is null.
  */
 exports.updateSchema = (hospitalName, version, schemaJson, callback) => {
