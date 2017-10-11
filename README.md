@@ -133,7 +133,7 @@ root
 
 ## Summary
 
-This data pipeline provided real-time data transformation, high automation among ETL, and reduced a large amount of time to deal with different schema and data cleansing problems.
+This data pipeline provides real-time data transformation automatically, and reduces a lot of time to manage and maintain system and develop new data transformation scripts. 
 
 ## Future Work
 
